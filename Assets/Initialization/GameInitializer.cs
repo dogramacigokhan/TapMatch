@@ -1,4 +1,5 @@
 using TapMatch.GridSystem;
+using TapMatch.GridSystem.Interactions;
 using UnityEngine;
 
 namespace TapMatch.Initialization
@@ -10,8 +11,18 @@ namespace TapMatch.Initialization
 
         private void Awake()
         {
-            var viewModel = new GridViewModel(5, 4, this.gridItemSettings);
             var gridView = Instantiate(this.gridViewPrefab);
+            var interactionProviders = new IInteractionProvider[]
+            {
+                gridView,
+                new NetworkInteractionSource(),
+            };
+
+            var viewModel = new GridViewModel(
+                rowCount: 5,
+                colCount: 4,
+                this.gridItemSettings,
+                interactionProviders);
 
             gridView.Init(viewModel);
         }

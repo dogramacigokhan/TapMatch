@@ -16,7 +16,10 @@ namespace TapMatch.GridSystem
             {
                 for (var j = 0; j < colCount; j++)
                 {
-                    resultArray[i, j] = new GridItemModel(gridItemSettings[Random.Range(0, gridItemSettings.Count)]);
+                    resultArray[i, j] = new GridItemModel(
+                        gridItemSettings[Random.Range(0, gridItemSettings.Count)],
+                        row: i,
+                        column: j);
                 }
             }
         }
