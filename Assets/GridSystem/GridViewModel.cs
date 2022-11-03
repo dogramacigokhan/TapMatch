@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using TapMatch.GridSystem.Interactions;
+using UnityEngine;
 
 namespace TapMatch.GridSystem
 {
@@ -16,6 +18,8 @@ namespace TapMatch.GridSystem
 
         private readonly GridItemModelGenerator gridItemModelGenerator;
         private readonly IReadOnlyList<GridItemSetting> gridItemSettings;
+
+        private bool areInteractionsEnabled;
 
         public GridViewModel(
             int rowCount,
@@ -37,6 +41,11 @@ namespace TapMatch.GridSystem
 
         private void OnGridItemSelected(int row, int column)
         {
+            if (!this.areInteractionsEnabled)
+            {
+                Debug.LogWarning("Interactions are suppressed.");
+            }
+
             this.DestroyGridItems?.Invoke(new[] {row}, new[] {column});
 
             for (var i = row - 1; i >= 0; i--)
@@ -48,6 +57,11 @@ namespace TapMatch.GridSystem
 
             this.GridItemModels[0, column] = this.gridItemModelGenerator.GenerateModel(this.gridItemSettings);
             this.AddGridItems?.Invoke(new[] {0}, new[] {column});
+        }
+
+        public void SuppressInteractions(bool shouldSuppress)
+        {
+            this.areInteractionsEnabled = shouldSuppress;
         }
     }
 }

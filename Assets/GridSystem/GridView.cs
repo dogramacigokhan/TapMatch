@@ -63,6 +63,7 @@ namespace TapMatch.GridSystem
 
         private void OnClickedToItemView(int row, int column)
         {
+            this.viewModel.SuppressInteractions(shouldSuppress: true);
             this.GridItemSelected?.Invoke(row, column);
         }
 
@@ -72,6 +73,8 @@ namespace TapMatch.GridSystem
             {
                 this.CreateGridItemView(rows[i], columns[i], animate: true);
             }
+
+            this.viewModel.SuppressInteractions(shouldSuppress: false);
         }
 
         private void OnDestroyGridItems(int[] rows, int[] columns)
