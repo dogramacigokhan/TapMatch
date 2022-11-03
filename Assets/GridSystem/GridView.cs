@@ -23,7 +23,7 @@ namespace TapMatch.GridSystem
                 {
                     Instantiate(
                         this.gridItemViewPrefab,
-                        new Vector3(j, i, 0),
+                        new Vector3(j - ((float)(colCount - 1) / 2), ((float)(rowCount - 1) / 2) - i, 0),
                         Quaternion.identity,
                         this.transform);
                 }
