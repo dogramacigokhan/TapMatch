@@ -1,7 +1,10 @@
 {
     "name": "Initialization",
     "rootNamespace": "TapMatch",
-    "references": [],
+    "references": [
+        "GridSystem",
+        "GridSystem.Interactions"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

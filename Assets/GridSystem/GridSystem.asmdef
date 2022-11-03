@@ -1,7 +1,9 @@
 {
     "name": "GridSystem",
     "rootNamespace": "TapMatch",
-    "references": [],
+    "references": [
+        "GridSystem.Interactions"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
