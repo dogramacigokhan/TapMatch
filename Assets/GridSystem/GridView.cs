@@ -1,3 +1,5 @@
+using System.Collections;
+using DG.Tweening;
 using TapMatch.GridSystem.Interactions;
 using UnityEngine;
 
@@ -33,12 +35,12 @@ namespace TapMatch.GridSystem
             {
                 for (var column = 0; column < this.colCount; column++)
                 {
-                    this.CreateGridItemView(row, column);
+                    this.CreateGridItemView(row, column, animate: false);
                 }
             }
         }
 
-        private void CreateGridItemView(int row, int column)
+        private void CreateGridItemView(int row, int column, bool animate)
         {
             var gridItemView = Instantiate(
                 this.gridItemViewPrefab,
@@ -49,8 +51,14 @@ namespace TapMatch.GridSystem
             var itemModel = this.viewModel.GridItemModels[row, column];
             gridItemView.Init(itemModel, row, column);
             gridItemView.Clicked += this.OnClickedToItemView;
-
             this.gridItemViews[row, column] = gridItemView;
+
+            if (animate)
+            {
+                var viewTransform = gridItemView.transform;
+                viewTransform.localScale = Vector3.zero;
+                viewTransform.DOScale(Vector3.one, 0.2f).SetDelay(0.2f);
+            }
         }
 
         private void OnClickedToItemView(int row, int column)
@@ -62,7 +70,7 @@ namespace TapMatch.GridSystem
         {
             for (var i = 0; i < rows.Length; i++)
             {
-                this.CreateGridItemView(rows[i], columns[i]);
+                this.CreateGridItemView(rows[i], columns[i], animate: true);
             }
         }
 
@@ -85,9 +93,13 @@ namespace TapMatch.GridSystem
             for (var i = startRow; i >= 0; i--)
             {
                 var viewToShift = this.gridItemViews[i, startColumn];
-                viewToShift.transform.localPosition -= new Vector3(0, amount, 0);
                 this.gridItemViews[i + amount, startColumn] = viewToShift;
                 viewToShift.ShiftRow(amount);
+
+                viewToShift.transform
+                    .DOLocalMoveY(-amount, 0.2f)
+                    .SetRelative()
+                    .SetDelay(0.2f);
             }
 
             for (var i = 0; i < amount; i++)

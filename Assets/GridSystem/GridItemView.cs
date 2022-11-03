@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace TapMatch.GridSystem
@@ -33,8 +34,9 @@ namespace TapMatch.GridSystem
 
         public void DestroyView()
         {
-            // TODO: Animate out
-            Destroy(this.gameObject);
+            this.transform
+                .DOScale(Vector3.zero, 0.2f)
+                .OnComplete(() => Destroy(this.gameObject));
         }
     }
 }

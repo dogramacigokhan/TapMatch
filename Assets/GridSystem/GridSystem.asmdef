@@ -2,6 +2,7 @@
     "name": "GridSystem",
     "rootNamespace": "TapMatch",
     "references": [
+        "DOTween.Modules",
         "GridSystem.Interactions"
     ],
     "includePlatforms": [],
