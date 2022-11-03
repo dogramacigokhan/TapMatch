@@ -12,16 +12,16 @@ namespace TapMatch.GridSystem
             var rowCount = resultArray.GetLength(0);
             var colCount = resultArray.GetLength(1);
 
-            for (var i = 0; i < rowCount; i++)
+            for (var row = 0; row < rowCount; row++)
             {
-                for (var j = 0; j < colCount; j++)
+                for (var column = 0; column < colCount; column++)
                 {
-                    resultArray[i, j] = new GridItemModel(
-                        gridItemSettings[Random.Range(0, gridItemSettings.Count)],
-                        row: i,
-                        column: j);
+                    resultArray[row, column] = GenerateModel(gridItemSettings);
                 }
             }
         }
+
+        public GridItemModel GenerateModel(IReadOnlyList<GridItemSetting> gridItemSettings) => new(
+            gridItemSettings[Random.Range(0, gridItemSettings.Count)]);
     }
 }
