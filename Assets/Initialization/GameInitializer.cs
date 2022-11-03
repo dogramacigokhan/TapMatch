@@ -9,7 +9,7 @@ namespace TapMatch.Initialization
 
         private void Awake()
         {
-            var viewModel = new GridViewModel();
+            var viewModel = new GridViewModel(5, 4);
             var gridView = Instantiate(this.gridViewPrefab);
 
             gridView.Init(viewModel);

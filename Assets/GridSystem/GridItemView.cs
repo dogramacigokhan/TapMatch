@@ -6,9 +6,9 @@ namespace TapMatch.GridSystem
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
 
-        public void Init(Sprite sprite)
+        public void Init(GridItemModel model)
         {
-            this.spriteRenderer.sprite = sprite;
+            this.spriteRenderer.color = model.Color;
         }
     }
 }

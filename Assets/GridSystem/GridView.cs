@@ -21,11 +21,14 @@ namespace TapMatch.GridSystem
             {
                 for (var j = 0; j < colCount; j++)
                 {
-                    Instantiate(
+                    var gridItemView = Instantiate(
                         this.gridItemViewPrefab,
                         new Vector3(j - ((float)(colCount - 1) / 2), ((float)(rowCount - 1) / 2) - i, 0),
                         Quaternion.identity,
                         this.transform);
+
+                    var itemModel = this.viewModel.GridItemModels[i, j];
+                    gridItemView.Init(itemModel);
                 }
             }
         }

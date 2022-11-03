@@ -4,6 +4,11 @@ namespace TapMatch.GridSystem
 {
     public class GridItemModel
     {
-        public Color Color = Color.red;
+        public readonly Color Color;
+
+        public GridItemModel(Color color)
+        {
+            this.Color = color;
+        }
     }
 }
