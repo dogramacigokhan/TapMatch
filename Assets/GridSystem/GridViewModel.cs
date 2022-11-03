@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace TapMatch.GridSystem
 {
     public class GridViewModel
@@ -6,12 +8,15 @@ namespace TapMatch.GridSystem
 
         private readonly GridItemModelGenerator gridItemModelGenerator;
 
-        public GridViewModel(int rowCount, int colCount)
+        public GridViewModel(
+            int rowCount,
+            int colCount,
+            IReadOnlyList<GridItemSetting> gridItemSettings)
         {
             this.gridItemModelGenerator = new GridItemModelGenerator();
 
             this.GridItemModels = new GridItemModel[rowCount, colCount];
-            this.gridItemModelGenerator.GenerateModels(this.GridItemModels);
+            this.gridItemModelGenerator.GenerateModels(this.GridItemModels, gridItemSettings);
         }
     }
 }

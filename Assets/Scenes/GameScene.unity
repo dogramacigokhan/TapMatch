@@ -396,3 +396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridViewPrefab: {fileID: 3796996260114763820, guid: 02f9af2117b5a4c1cabef1c697c61e1b, type: 3}
+  gridItemSettings:
+  - {fileID: 11400000, guid: 18c16628987f14ba78a5f122852e124a, type: 2}
+  - {fileID: 11400000, guid: 09f10332d6bd148c49051a946591f5af, type: 2}
+  - {fileID: 11400000, guid: 0c04d8cbd2bcf4341a9ad73271c80552, type: 2}
