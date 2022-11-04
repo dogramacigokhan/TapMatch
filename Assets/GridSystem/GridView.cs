@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using TapMatch.GridSystem.Interactions;
 using UnityEngine;
@@ -67,22 +67,22 @@ namespace TapMatch.GridSystem
             this.GridItemSelected?.Invoke(row, column);
         }
 
-        private void OnAddGridItems(int[] rows, int[] columns)
+        private void OnAddGridItems((int row, int column)[] indices)
         {
-            for (var i = 0; i < rows.Length; i++)
+            for (var i = 0; i < indices.Length; i++)
             {
-                this.CreateGridItemView(rows[i], columns[i], animate: true);
+                this.CreateGridItemView(indices[i].row, indices[i].column, animate: true);
             }
 
             this.viewModel.SuppressInteractions(shouldSuppress: false);
         }
 
-        private void OnDestroyGridItems(int[] rows, int[] columns)
+        private void OnDestroyGridItems((int row, int column)[] indices)
         {
-            for (var i = 0; i < rows.Length; i++)
+            for (var i = 0; i < indices.Length; i++)
             {
-                var row = rows[i];
-                var column = columns[i];
+                var row = indices[i].row;
+                var column = indices[i].column;
 
                 var itemView = this.gridItemViews[row, column];
                 itemView.Clicked -= this.OnClickedToItemView;
@@ -91,23 +91,23 @@ namespace TapMatch.GridSystem
             }
         }
 
-        private void OnShiftGridItems(int startRow, int startColumn, int amount)
+        private void OnShiftGridItems(Dictionary<(int row, int col), int> indicesToShift)
         {
-            for (var i = startRow; i >= 0; i--)
+            foreach (var indexToShift in indicesToShift)
             {
-                var viewToShift = this.gridItemViews[i, startColumn];
-                this.gridItemViews[i + amount, startColumn] = viewToShift;
-                viewToShift.ShiftRow(amount);
+                var index = indexToShift.Key;
+                var shiftAmount = indexToShift.Value;
 
+                var viewToShift = this.gridItemViews[index.row, index.col];
                 viewToShift.transform
-                    .DOLocalMoveY(-amount, 0.2f)
+                    .DOLocalMoveY(-shiftAmount, 0.2f)
                     .SetRelative()
-                    .SetDelay(0.2f);
-            }
-
-            for (var i = 0; i < amount; i++)
-            {
-                this.gridItemViews[i, startColumn] = null;
+                    .SetDelay(0.2f)
+                    .OnComplete(() =>
+                    {
+                        this.gridItemViews[index.row + shiftAmount, index.col] = viewToShift;
+                        viewToShift.ShiftRow(shiftAmount);
+                    });
             }
         }
     }

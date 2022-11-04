@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using TapMatch.GridSystem.Interactions;
 using UnityEngine;
 
@@ -8,8 +8,8 @@ namespace TapMatch.GridSystem
 
     public class GridViewModel
     {
-        public delegate void AddOrDestroyGridItemsEventHandler(int[] rows, int[] columns);
-        public delegate void ShiftGridItemsEventHandler(int startRow, int startColumn, int amount);
+        public delegate void AddOrDestroyGridItemsEventHandler((int row, int column)[] indices);
+        public delegate void ShiftGridItemsEventHandler(Dictionary<(int row, int col), int> indicesToShift);
 
         public readonly GridItemModel[,] GridItemModels;
         public event AddOrDestroyGridItemsEventHandler AddGridItems;
@@ -46,17 +46,66 @@ namespace TapMatch.GridSystem
                 Debug.LogWarning("Interactions are suppressed.");
             }
 
-            this.DestroyGridItems?.Invoke(new[] {row}, new[] {column});
-
-            for (var i = row - 1; i >= 0; i--)
+            var indicesToDestroy = new (int row, int column)[]
             {
-                this.GridItemModels[i + 1, column] = this.GridItemModels[i, column];
+                (row - 2, column - 1),
+                (row - 2, column),
+                (row - 2, column + 1),
+                (row - 1, column - 1),
+                (row - 1, column + 1),
+                (row, column - 1),
+                (row, column),
+                (row, column + 1),
+            };
+
+            this.DestroyGridItems?.Invoke(indicesToDestroy);
+
+            var indicesToShift = new Dictionary<(int row, int col), int>();
+            var elementCountToAddByColumn = indicesToDestroy
+                .GroupBy(pair => pair.column)
+                .ToDictionary(group => group.Key, group => group.Count());
+
+            foreach (var tuple in indicesToDestroy)
+            {
+                for (var i = tuple.row - 1; i >= 0; i--)
+                {
+                    var indexToCheck = (i, tuple.column);
+                    if (indicesToDestroy.Contains(indexToCheck))
+                    {
+                        continue;
+                    }
+
+                    var newShiftAmount = indicesToShift.TryGetValue(indexToCheck, out var shiftAmount)
+                        ? shiftAmount + 1
+                        : 1;
+
+                    indicesToShift[indexToCheck] = newShiftAmount;
+                }
             }
 
-            this.ShiftGridItems?.Invoke(row - 1, column, amount: 1);
+            foreach (var indexToShift in indicesToShift)
+            {
+                var index = indexToShift.Key;
+                var shiftAmount = indexToShift.Value;
 
-            this.GridItemModels[0, column] = this.gridItemModelGenerator.GenerateModel(this.gridItemSettings);
-            this.AddGridItems?.Invoke(new[] {0}, new[] {column});
+                // Shift the item models
+                this.GridItemModels[index.row + shiftAmount, index.col] = this.GridItemModels[index.row, index.col];
+            }
+
+            this.ShiftGridItems?.Invoke(indicesToShift);
+
+            var indicesToAdd = elementCountToAddByColumn
+                .SelectMany(pair => Enumerable
+                    .Range(0, pair.Value)
+                    .Select(row => (row, column: pair.Key)))
+                .ToArray();
+
+            foreach (var tuple in indicesToAdd)
+            {
+                this.GridItemModels[tuple.row, tuple.column] = this.gridItemModelGenerator.GenerateModel(this.gridItemSettings);
+            }
+
+            this.AddGridItems?.Invoke(indicesToAdd);
         }
 
         public void SuppressInteractions(bool shouldSuppress)
