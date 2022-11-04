@@ -20,6 +20,7 @@ namespace TapMatch.GridSystem
             this.row = row;
             this.column = column;
             this.spriteRenderer.color = model.Color;
+            this.spriteRenderer.sprite = model.Sprite;
         }
 
         public void ShiftRow(int amount)

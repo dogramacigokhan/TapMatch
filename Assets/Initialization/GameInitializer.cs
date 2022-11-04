@@ -20,8 +20,8 @@ namespace TapMatch.Initialization
             };
 
             var viewModel = new GridViewModel(
-                rowCount: 5,
-                colCount: 4,
+                rowCount: 8,
+                colCount: 5,
                 this.gridItemSettings,
                 interactionProviders,
                 new DepthFirstGridMatchFinder());

@@ -57,10 +57,11 @@ namespace TapMatch.GridSystem
             if (!initialCreation)
             {
                 var viewTransform = gridItemView.transform;
+                var initialScale = viewTransform.localScale;
                 viewTransform.localScale = Vector3.zero;
 
                 viewTransform
-                    .DOScale(Vector3.one, 0.2f)
+                    .DOScale(initialScale, 0.2f)
                     .SetDelay(0.4f)
                     .OnComplete(() => this.viewModel.SuppressInteractions(shouldSuppress: false));
             }
