@@ -206,13 +206,13 @@ namespace TapMatch.GridSystem.Tests.PlayMode
             Received.InOrder(() =>
             {
                 itemsDestroyedHandler.Received().Invoke(Arg.Do<GridIndex[]>(indices =>
-                    CollectionAssert.AreEquivalent(indices, testCase.ExpectedIndicesToDestroy)));
+                    CollectionAssert.AreEquivalent(testCase.ExpectedIndicesToDestroy, indices)));
 
                 itemsShiftedHandler.Received().Invoke(Arg.Do<Dictionary<GridIndex, int>>(dict =>
-                    CollectionAssert.AreEqual(dict, testCase.ExpectedIndicesToShift)));
+                    CollectionAssert.AreEqual(testCase.ExpectedIndicesToShift, dict)));
 
                 itemsAddedHandler.Received().Invoke(Arg.Do<GridIndex[]>(indices =>
-                    CollectionAssert.AreEquivalent(indices, testCase.ExpectedIndicesToAdd)));
+                    CollectionAssert.AreEquivalent(testCase.ExpectedIndicesToAdd, indices)));
             });
         }
 
