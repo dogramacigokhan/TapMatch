@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace TapMatch.GridSystem
 {
-    public class GridItemModel
+    public class GridItemModel : IMatchableItem
     {
-        public readonly int TypeId;
+        public int TypeId { get; }
         public readonly Color Color;
         public readonly Sprite Sprite;
 

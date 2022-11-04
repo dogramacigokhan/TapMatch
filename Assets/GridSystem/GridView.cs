@@ -20,9 +20,9 @@ namespace TapMatch.GridSystem
         {
             this.viewModel = viewModel;
 
-            this.viewModel.AddGridItems += this.OnAddGridItems;
-            this.viewModel.DestroyGridItems += this.OnDestroyGridItems;
-            this.viewModel.ShiftGridItems += this.OnShiftGridItems;
+            this.viewModel.AddedGridItems += this.OnAddedGridItems;
+            this.viewModel.DestroyedGridItems += this.OnDestroyedGridItems;
+            this.viewModel.ShiftedGridItems += this.OnShiftedGridItems;
         }
 
         private void Start()
@@ -67,7 +67,7 @@ namespace TapMatch.GridSystem
             this.GridItemSelected?.Invoke(row, column);
         }
 
-        private void OnAddGridItems((int row, int column)[] indices)
+        private void OnAddedGridItems((int row, int column)[] indices)
         {
             for (var i = 0; i < indices.Length; i++)
             {
@@ -77,7 +77,7 @@ namespace TapMatch.GridSystem
             this.viewModel.SuppressInteractions(shouldSuppress: false);
         }
 
-        private void OnDestroyGridItems((int row, int column)[] indices)
+        private void OnDestroyedGridItems((int row, int column)[] indices)
         {
             for (var i = 0; i < indices.Length; i++)
             {
@@ -91,7 +91,7 @@ namespace TapMatch.GridSystem
             }
         }
 
-        private void OnShiftGridItems(Dictionary<(int row, int col), int> indicesToShift)
+        private void OnShiftedGridItems(Dictionary<(int row, int col), int> indicesToShift)
         {
             foreach (var indexToShift in indicesToShift)
             {

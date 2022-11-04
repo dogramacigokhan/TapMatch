@@ -22,7 +22,8 @@ namespace TapMatch.Initialization
                 rowCount: 5,
                 colCount: 4,
                 this.gridItemSettings,
-                interactionProviders);
+                interactionProviders,
+                new DepthFirstGridMatchFinder());
 
             gridView.Init(viewModel);
         }
