@@ -8,9 +8,9 @@ namespace TapMatch.GridSystem
         public readonly Color Color;
         public readonly Sprite Sprite;
 
-        public GridItemModel(GridItemSetting itemSetting)
+        public GridItemModel(IGridItemSetting itemSetting)
         {
-            this.TypeId = itemSetting.ItemId;
+            this.TypeId = itemSetting.TypeId;
             this.Color = itemSetting.Color;
             this.Sprite = itemSetting.Sprite;
         }

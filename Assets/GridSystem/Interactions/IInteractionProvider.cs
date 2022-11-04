@@ -1,9 +1,9 @@
+using System;
+
 namespace TapMatch.GridSystem.Interactions
 {
-    public delegate void GridItemSelectedEventHandler(int row, int column);
-
     public interface IInteractionProvider
     {
-        public event GridItemSelectedEventHandler GridItemSelected;
+        public event Action<(int row, int column)> GridItemSelected;
     }
 }

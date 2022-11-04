@@ -3,13 +3,13 @@ using UnityEngine;
 namespace TapMatch.GridSystem
 {
     [CreateAssetMenu(menuName = "TapMatch/Grid Item Setting", fileName = "GridItem")]
-    public class GridItemSetting : ScriptableObject
+    public class GridItemSetting : ScriptableObject, IGridItemSetting
     {
-        [SerializeField] private int itemId;
+        [SerializeField] private int typeId;
         [SerializeField] private Color color;
         [SerializeField] private Sprite sprite;
 
-        public int ItemId => this.itemId;
+        public int TypeId => this.typeId;
         public Color Color => this.color;
         public Sprite Sprite => this.sprite;
     }

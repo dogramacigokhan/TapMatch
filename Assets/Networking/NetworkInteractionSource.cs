@@ -1,6 +1,10 @@
+using System;
 using TapMatch.GridSystem.Interactions;
 
-public class NetworkInteractionSource : IInteractionProvider
+namespace TapMatch.Networking
 {
-    public event GridItemSelectedEventHandler GridItemSelected;
+    public class NetworkInteractionSource : IInteractionProvider
+    {
+        public event Action<(int row, int column)> GridItemSelected;
+    }
 }

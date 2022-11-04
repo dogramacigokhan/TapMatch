@@ -5,11 +5,10 @@ using UnityEngine;
 
 namespace TapMatch.GridSystem
 {
-
     public class GridViewModel
     {
-        public delegate void AddedOrDestroyedGridItemsEventHandler((int row, int column)[] indices);
-        public delegate void ShiftedGridItemsEventHandler(Dictionary<(int row, int col), int> indicesToShift);
+        public delegate void AddedOrDestroyedGridItemsEventHandler(GridIndex[] indices);
+        public delegate void ShiftedGridItemsEventHandler(Dictionary<GridIndex, int> indicesToShift);
 
         public readonly GridItemModel[,] GridItemModels;
         public event AddedOrDestroyedGridItemsEventHandler AddedGridItems;
@@ -17,7 +16,7 @@ namespace TapMatch.GridSystem
         public event ShiftedGridItemsEventHandler ShiftedGridItems;
 
         private readonly GridItemModelGenerator gridItemModelGenerator;
-        private readonly IReadOnlyList<GridItemSetting> gridItemSettings;
+        private readonly IReadOnlyList<IGridItemSetting> gridItemSettings;
         private readonly IGridMatchFinder gridMatchFinder;
 
         private bool areInteractionsEnabled = true;
@@ -25,7 +24,7 @@ namespace TapMatch.GridSystem
         public GridViewModel(
             int rowCount,
             int colCount,
-            IReadOnlyList<GridItemSetting> gridItemSettings,
+            IReadOnlyList<IGridItemSetting> gridItemSettings,
             IEnumerable<IInteractionProvider> interactionProviders,
             IGridMatchFinder gridMatchFinder)
         {
@@ -42,7 +41,7 @@ namespace TapMatch.GridSystem
             }
         }
 
-        private void OnGridItemSelected(int selectedRow, int selectedColumn)
+        private void OnGridItemSelected((int selectedRow, int selectedColumn) args)
         {
             if (!this.areInteractionsEnabled)
             {
@@ -52,12 +51,12 @@ namespace TapMatch.GridSystem
 
             var indicesToDestroy = this.gridMatchFinder.FindMatches(
                 this.GridItemModels,
-                selectedRow,
-                selectedColumn);
+                args.selectedRow,
+                args.selectedColumn);
 
-            foreach (var (row, column) in indicesToDestroy)
+            foreach (var index in indicesToDestroy)
             {
-                this.GridItemModels[row, column] = null;
+                this.GridItemModels[index.Row, index.Column] = null;
             }
 
             this.DestroyedGridItems?.Invoke(indicesToDestroy);
@@ -65,14 +64,14 @@ namespace TapMatch.GridSystem
             this.CalculateAndAddGridItems(indicesToDestroy);
         }
 
-        private void LocateAndShiftGridItems((int row, int column)[] indicesToDestroy)
+        private void LocateAndShiftGridItems(GridIndex[] indicesToDestroy)
         {
-            var indicesToShift = new Dictionary<(int row, int col), int>();
-            foreach (var tuple in indicesToDestroy)
+            var indicesToShift = new Dictionary<GridIndex, int>();
+            foreach (var index in indicesToDestroy)
             {
-                for (var i = tuple.row - 1; i >= 0; i--)
+                for (var i = index.Row - 1; i >= 0; i--)
                 {
-                    var indexToCheck = (i, tuple.column);
+                    var indexToCheck = new GridIndex(i, index.Column);
                     if (indicesToDestroy.Contains(indexToCheck))
                     {
                         continue;
@@ -89,24 +88,24 @@ namespace TapMatch.GridSystem
             foreach (var (index, shiftAmount) in indicesToShift)
             {
                 // Shift the item models
-                this.GridItemModels[index.row + shiftAmount, index.col] = this.GridItemModels[index.row, index.col];
+                this.GridItemModels[index.Row + shiftAmount, index.Column] = this.GridItemModels[index.Row, index.Column];
             }
 
             this.ShiftedGridItems?.Invoke(indicesToShift);
         }
 
-        private void CalculateAndAddGridItems((int row, int column)[] indicesToDestroy)
+        private void CalculateAndAddGridItems(GridIndex[] indicesToDestroy)
         {
             var indicesToAdd = indicesToDestroy
-                .GroupBy(pair => pair.column)
+                .GroupBy(index => index.Column)
                 .SelectMany(group => Enumerable
                     .Range(0, group.Count())
-                    .Select(rowIndex => (rowIndex, column: group.Key)))
+                    .Select(rowIndex => new GridIndex(rowIndex, column: group.Key)))
                 .ToArray();
 
-            foreach (var tuple in indicesToAdd)
+            foreach (var index in indicesToAdd)
             {
-                this.GridItemModels[tuple.rowIndex, tuple.column] =
+                this.GridItemModels[index.Row, index.Column] =
                     this.gridItemModelGenerator.GenerateModel(this.gridItemSettings);
             }
 

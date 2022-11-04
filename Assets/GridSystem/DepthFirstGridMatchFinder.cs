@@ -2,18 +2,18 @@ namespace TapMatch.GridSystem
 {
     public class DepthFirstGridMatchFinder : IGridMatchFinder
     {
-        public (int row, int column)[] FindMatches(IMatchableItem[,] matchableItems, int startRow, int startColumn)
+        public GridIndex[] FindMatches(IMatchableItem[,] matchableItems, int startRow, int startColumn)
         {
-            return new (int row, int column)[]
+            return new GridIndex[]
             {
-                (startRow - 2, startColumn - 1),
-                (startRow - 2, startColumn),
-                (startRow - 2, startColumn + 1),
-                (startRow - 1, startColumn - 1),
-                (startRow - 1, startColumn + 1),
-                (startRow, startColumn - 1),
-                (startRow, startColumn),
-                (startRow, startColumn + 1),
+                new(startRow - 2, startColumn - 1),
+                new(startRow - 2, startColumn),
+                new(startRow - 2, startColumn + 1),
+                new(startRow - 1, startColumn - 1),
+                new(startRow - 1, startColumn + 1),
+                new(startRow, startColumn - 1),
+                new(startRow, startColumn),
+                new(startRow, startColumn + 1),
             };
         }
     }

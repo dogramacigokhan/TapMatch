@@ -7,7 +7,7 @@ namespace TapMatch.GridSystem
     {
         public void GenerateModels(
             GridItemModel[,] resultArray,
-            IReadOnlyList<GridItemSetting> gridItemSettings)
+            IReadOnlyList<IGridItemSetting> gridItemSettings)
         {
             var rowCount = resultArray.GetLength(0);
             var colCount = resultArray.GetLength(1);
@@ -16,12 +16,12 @@ namespace TapMatch.GridSystem
             {
                 for (var column = 0; column < colCount; column++)
                 {
-                    resultArray[row, column] = GenerateModel(gridItemSettings);
+                    resultArray[row, column] = this.GenerateModel(gridItemSettings);
                 }
             }
         }
 
-        public GridItemModel GenerateModel(IReadOnlyList<GridItemSetting> gridItemSettings) => new(
+        public GridItemModel GenerateModel(IReadOnlyList<IGridItemSetting> gridItemSettings) => new(
             gridItemSettings[Random.Range(0, gridItemSettings.Count)]);
     }
 }
