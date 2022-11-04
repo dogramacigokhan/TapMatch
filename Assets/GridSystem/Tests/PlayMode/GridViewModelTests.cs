@@ -58,20 +58,21 @@ namespace TapMatch.GridSystem.Tests.PlayMode
             });
         }
 
-        public static readonly GridTestCase[] GridTestCases =
+        public static readonly TestCaseData[] GridTestCases =
         {
             // 0 0 -> x 0
             // 0 0 -> 0 0
-            new GridTestCase(
-                rowCount: 2,
-                columnCount: 2,
-                expectedIndicesToDestroy: new[] {new GridIndex(0, 0)},
-                expectedIndicesToShift: new Dictionary<GridIndex, int>(),
-                expectedIndicesToAdd: new[] {new GridIndex(0, 0)}),
+            new(new GridTestCase(
+                    rowCount: 2,
+                    columnCount: 2,
+                    expectedIndicesToDestroy: new[] {new GridIndex(0, 0)},
+                    expectedIndicesToShift: new Dictionary<GridIndex, int>(),
+                    expectedIndicesToAdd: new[] {new GridIndex(0, 0)}))
+                {TestName = "Destroying single element from top"},
 
             // 0 0 -> 0 0
             // 0 0 -> x 0
-            new GridTestCase(
+            new(new GridTestCase(
                 rowCount: 2,
                 columnCount: 2,
                 expectedIndicesToDestroy: new[] {new GridIndex(1, 0)},
@@ -79,23 +80,140 @@ namespace TapMatch.GridSystem.Tests.PlayMode
                 {
                     [new GridIndex(0, 0)] = 1,
                 },
-                expectedIndicesToAdd: new[] {new GridIndex(0, 0)}),
+                expectedIndicesToAdd: new[] {new GridIndex(0, 0)}))
+                {TestName = "Destroying single element on second row"},
+
+            // 0 0 -> 0 0
+            // 0 0 -> x x
+            new(new GridTestCase(
+                rowCount: 2,
+                columnCount: 2,
+                expectedIndicesToDestroy: new[]
+                {
+                    new GridIndex(1, 0),
+                    new GridIndex(1, 1),
+                },
+                expectedIndicesToShift: new Dictionary<GridIndex, int>
+                {
+                    [new GridIndex(0, 0)] = 1,
+                    [new GridIndex(0, 1)] = 1,
+                },
+                expectedIndicesToAdd: new[]
+                {
+                    new GridIndex(0, 0),
+                    new GridIndex(0, 1),
+                }))
+                {TestName = "Destroying multiple elements on second row"},
+
+            // 0 0 0 0 -> 0 0 0 0
+            // 0 0 0 0 -> 0 x 0 0
+            // 0 0 0 0 -> 0 x 0 0
+            // 0 0 0 0 -> 0 x x 0
+            new(new GridTestCase(
+                rowCount: 4,
+                columnCount: 4,
+                expectedIndicesToDestroy: new[]
+                {
+                    new GridIndex(1, 1),
+                    new GridIndex(2, 1),
+                    new GridIndex(3, 1),
+                    new GridIndex(3, 2),
+                },
+                expectedIndicesToShift: new Dictionary<GridIndex, int>
+                {
+                    [new GridIndex(0, 1)] = 3,
+                    [new GridIndex(0, 2)] = 1,
+                    [new GridIndex(1, 2)] = 1,
+                    [new GridIndex(2, 2)] = 1,
+                },
+                expectedIndicesToAdd: new[]
+                {
+                    new GridIndex(0, 1),
+                    new GridIndex(1, 1),
+                    new GridIndex(2, 1),
+                    new GridIndex(0, 2),
+                }))
+                {TestName = "Destroying L shape"},
+
+            // 0 0 0 0 0 -> 0 0 0 0 0
+            // 0 0 0 0 0 -> 0 X X X 0
+            // 0 0 0 0 0 -> 0 X 0 0 0
+            // 0 0 0 0 0 -> 0 X X X 0
+            // 0 0 0 0 0 -> 0 0 0 X 0
+            // 0 0 0 0 0 -> 0 X X X 0
+            new(new GridTestCase(
+                rowCount: 6,
+                columnCount: 5,
+                expectedIndicesToDestroy: new[]
+                {
+                    new GridIndex(1, 1),
+                    new GridIndex(1, 2),
+                    new GridIndex(1, 3),
+                    new GridIndex(2, 1),
+                    new GridIndex(3, 1),
+                    new GridIndex(3, 2),
+                    new GridIndex(3, 3),
+                    new GridIndex(4, 3),
+                    new GridIndex(5, 1),
+                    new GridIndex(5, 2),
+                    new GridIndex(5, 3),
+                },
+                expectedIndicesToShift: new Dictionary<GridIndex, int>
+                {
+                    [new GridIndex(4, 1)] = 1,
+                    [new GridIndex(0, 1)] = 4,
+                    [new GridIndex(4, 2)] = 1,
+                    [new GridIndex(2, 2)] = 2,
+                    [new GridIndex(0, 2)] = 3,
+                    [new GridIndex(2, 3)] = 3,
+                    [new GridIndex(0, 3)] = 4,
+                },
+                expectedIndicesToAdd: new[]
+                {
+                    new GridIndex(0, 1),
+                    new GridIndex(1, 1),
+                    new GridIndex(2, 1),
+                    new GridIndex(3, 1),
+                    new GridIndex(0, 2),
+                    new GridIndex(1, 2),
+                    new GridIndex(2, 2),
+                    new GridIndex(0, 3),
+                    new GridIndex(1, 3),
+                    new GridIndex(2, 3),
+                    new GridIndex(3, 3),
+                }))
+                {TestName = "Destroying S shape"},
         };
 
         [TestCaseSource(nameof(GridTestCases))]
-        public void GridViewModel_DestroysCorrectItemIndices(GridTestCase testCase)
+        public void GridViewModel_ArrangesItemsCorrectly_AfterSelection(GridTestCase testCase)
         {
             this.gridMatchFinder.FindMatches(default, default, default).ReturnsForAnyArgs(testCase.ExpectedIndicesToDestroy);
 
             var viewModel = this.MakeViewModel(testCase.RowCount, testCase.ColumnCount);
 
-            var handler = Substitute.For<GridViewModel.AddedOrDestroyedGridItemsEventHandler>();
-            viewModel.DestroyedGridItems += handler;
+            var itemsDestroyedHandler = Substitute.For<GridViewModel.AddedOrDestroyedGridItemsEventHandler>();
+            var itemsShiftedHandler = Substitute.For<GridViewModel.ShiftedGridItemsEventHandler>();
+            var itemsAddedHandler = Substitute.For<GridViewModel.AddedOrDestroyedGridItemsEventHandler>();
+
+            viewModel.DestroyedGridItems += itemsDestroyedHandler;
+            viewModel.ShiftedGridItems += itemsShiftedHandler;
+            viewModel.AddedGridItems += itemsAddedHandler;
 
             // Trigger the interaction
             this.mainInteractionProvider.GridItemSelected += Raise.Event<Action<(int row, int column)>>((0, 0));
 
-            handler.Received().Invoke(testCase.ExpectedIndicesToDestroy);
+            Received.InOrder(() =>
+            {
+                itemsDestroyedHandler.Received().Invoke(Arg.Do<GridIndex[]>(indices =>
+                    CollectionAssert.AreEquivalent(indices, testCase.ExpectedIndicesToDestroy)));
+
+                itemsShiftedHandler.Received().Invoke(Arg.Do<Dictionary<GridIndex, int>>(dict =>
+                    CollectionAssert.AreEqual(dict, testCase.ExpectedIndicesToShift)));
+
+                itemsAddedHandler.Received().Invoke(Arg.Do<GridIndex[]>(indices =>
+                    CollectionAssert.AreEquivalent(indices, testCase.ExpectedIndicesToAdd)));
+            });
         }
 
         private IReadOnlyList<IGridItemSetting> GenerateSettings(int colorCount) => Enumerable
