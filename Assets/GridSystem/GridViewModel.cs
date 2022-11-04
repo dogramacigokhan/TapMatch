@@ -20,7 +20,7 @@ namespace TapMatch.GridSystem
         private readonly IReadOnlyList<GridItemSetting> gridItemSettings;
         private readonly IGridMatchFinder gridMatchFinder;
 
-        private bool areInteractionsEnabled;
+        private bool areInteractionsEnabled = true;
 
         public GridViewModel(
             int rowCount,
@@ -47,6 +47,7 @@ namespace TapMatch.GridSystem
             if (!this.areInteractionsEnabled)
             {
                 Debug.LogWarning("Interactions are suppressed.");
+                return;
             }
 
             var indicesToDestroy = this.gridMatchFinder.FindMatches(
@@ -114,7 +115,7 @@ namespace TapMatch.GridSystem
 
         public void SuppressInteractions(bool shouldSuppress)
         {
-            this.areInteractionsEnabled = shouldSuppress;
+            this.areInteractionsEnabled = !shouldSuppress;
         }
     }
 }

@@ -35,12 +35,12 @@ namespace TapMatch.GridSystem
             {
                 for (var column = 0; column < this.colCount; column++)
                 {
-                    this.CreateGridItemView(row, column, animate: false);
+                    this.CreateGridItemView(row, column, initialCreation: true);
                 }
             }
         }
 
-        private void CreateGridItemView(int row, int column, bool animate)
+        private void CreateGridItemView(int row, int column, bool initialCreation)
         {
             var gridItemView = Instantiate(
                 this.gridItemViewPrefab,
@@ -53,17 +53,20 @@ namespace TapMatch.GridSystem
             gridItemView.Clicked += this.OnClickedToItemView;
             this.gridItemViews[row, column] = gridItemView;
 
-            if (animate)
+            if (!initialCreation)
             {
                 var viewTransform = gridItemView.transform;
                 viewTransform.localScale = Vector3.zero;
-                viewTransform.DOScale(Vector3.one, 0.2f).SetDelay(0.2f);
+
+                viewTransform
+                    .DOScale(Vector3.one, 0.2f)
+                    .SetDelay(0.4f)
+                    .OnComplete(() => this.viewModel.SuppressInteractions(shouldSuppress: false));
             }
         }
 
         private void OnClickedToItemView(int row, int column)
         {
-            this.viewModel.SuppressInteractions(shouldSuppress: true);
             this.GridItemSelected?.Invoke(row, column);
         }
 
@@ -71,10 +74,8 @@ namespace TapMatch.GridSystem
         {
             for (var i = 0; i < indices.Length; i++)
             {
-                this.CreateGridItemView(indices[i].row, indices[i].column, animate: true);
+                this.CreateGridItemView(indices[i].row, indices[i].column, initialCreation: false);
             }
-
-            this.viewModel.SuppressInteractions(shouldSuppress: false);
         }
 
         private void OnDestroyedGridItems((int row, int column)[] indices)
@@ -89,6 +90,9 @@ namespace TapMatch.GridSystem
                 itemView.DestroyView();
                 this.gridItemViews[row, column] = null;
             }
+
+            // Suppress interactions until the new items are added.
+            this.viewModel.SuppressInteractions(shouldSuppress: true);
         }
 
         private void OnShiftedGridItems(Dictionary<(int row, int col), int> indicesToShift)
