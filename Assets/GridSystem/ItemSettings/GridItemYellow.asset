@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e294321a4246475595f54b0068b2da90, type: 3}
   m_Name: GridItemYellow
   m_EditorClassIdentifier: 
-  itemId: 2
+  typeId: 2
   color: {r: 1, g: 0.71623856, b: 0, a: 1}
   sprite: {fileID: 21300000, guid: 00c062d0addc34ee2b677bb2103724b6, type: 3}
