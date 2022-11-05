@@ -70,10 +70,7 @@ namespace TapMatch.Initialization
 
             this.viewModel?.Dispose();
             this.viewModel = new GridViewModel(
-                rowCount,
-                colCount,
-                colorCount,
-                this.gridItemSettings,
+                new GridModel(rowCount, colCount, colorCount, this.gridItemSettings),
                 interactionProviders,
                 new DepthFirstGridMatchFinder());
 

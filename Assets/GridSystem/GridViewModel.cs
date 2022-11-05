@@ -16,30 +16,25 @@ namespace TapMatch.GridSystem
         public event AddedOrDestroyedGridItemsEventHandler DestroyedGridItems;
         public event ShiftedGridItemsEventHandler ShiftedGridItems;
 
+        private readonly GridModel model;
         private readonly GridItemModelGenerator gridItemModelGenerator;
-        private readonly IReadOnlyList<IGridItemSetting> gridItemSettings;
         private readonly IGridMatchFinder gridMatchFinder;
         private readonly IReadOnlyList<IInteractionProvider> interactionProviders;
 
-        private readonly int colorCount;
         private bool areInteractionsEnabled = true;
 
         public GridViewModel(
-            int rowCount,
-            int colCount,
-            int colorCount,
-            IReadOnlyList<IGridItemSetting> gridItemSettings,
+            GridModel model,
             IEnumerable<IInteractionProvider> interactionProviders,
             IGridMatchFinder gridMatchFinder)
         {
-            this.colorCount = colorCount;
-            this.gridItemSettings = gridItemSettings;
+            this.model = model;
             this.gridItemModelGenerator = new GridItemModelGenerator();
             this.gridMatchFinder = gridMatchFinder;
             this.interactionProviders = interactionProviders.ToList();
 
-            this.GridItemModels = new GridItemModel[rowCount, colCount];
-            this.gridItemModelGenerator.GenerateModels(this.GridItemModels, gridItemSettings, colorCount);
+            this.GridItemModels = new GridItemModel[this.model.RowCount, this.model.ColCount];
+            this.gridItemModelGenerator.GenerateModels(this.GridItemModels, model.GridItemSettings, this.model.ColorCount);
 
             foreach (var interactionProvider in this.interactionProviders)
             {
@@ -120,7 +115,7 @@ namespace TapMatch.GridSystem
             foreach (var index in indicesToAdd)
             {
                 this.GridItemModels[index.Row, index.Column] =
-                    this.gridItemModelGenerator.GenerateModel(this.gridItemSettings, this.colorCount);
+                    this.gridItemModelGenerator.GenerateModel(this.model.GridItemSettings, this.model.ColorCount);
             }
 
             this.AddedGridItems?.Invoke(indicesToAdd);

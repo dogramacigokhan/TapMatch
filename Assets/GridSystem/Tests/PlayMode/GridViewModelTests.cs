@@ -234,10 +234,7 @@ namespace TapMatch.GridSystem.Tests.PlayMode
         {
             var settingsToUse = gridItemSettings ?? this.GenerateSettings(colorCount: 3);
             return new GridViewModel(
-                rowCount,
-                colCount,
-                colorCount: settingsToUse.Count,
-                settingsToUse,
+                new GridModel(rowCount, colCount, colorCount: settingsToUse.Count, settingsToUse),
                 interactionProviders ?? new[] { this.mainInteractionProvider },
                 this.gridMatchFinder);
         }
