@@ -81,19 +81,19 @@ There's also NSubstitute dependency to mock some interfaces to reduce the scope 
 
 There's currently also 100% code coverage for the ViewModel and DFS class:
 
-![Coverage](https://user-images.githubusercontent.com/3823941/200122762-3f53074b-4e68-446d-b76b-8ea627927e05.jpg)
+<img alt="Coverage" height="120" src="https://user-images.githubusercontent.com/3823941/200122762-3f53074b-4e68-446d-b76b-8ea627927e05.jpg">
 
 Overall coverage can be increased by adding tests for Grid View, and Grid Item views. Since they don't hold the business logic in them, a mocked ViewModel can be created to drive them and assert UI changes in the test easily.
 
 ## Item (Candy) Types
-![ItemTypeDependency](https://user-images.githubusercontent.com/3823941/200121194-5c19fa3f-8c1b-4e3b-bfec-3bb493c4f2a7.jpg)
+<img alt="ItemTypes" height="300" src="https://user-images.githubusercontent.com/3823941/200121194-5c19fa3f-8c1b-4e3b-bfec-3bb493c4f2a7.jpg">
 
 Item types are implemented using ScriptableObjects which hold _readonly_ settings in them. This data includes color, sprite type, item id, etc. to identify the item and define its visuals.
 
 With the help of this approach, new item / candy types can be easily added without requiring any code change by just creating new scriptable objects and assigning them in the editor.
 
 ## Main Class Dependency
-![MainClassDependency](https://user-images.githubusercontent.com/3823941/200121198-3eb6b159-bfbd-47fc-b8ef-3adf1dcc0fc3.jpg)
+<img alt="MainClassDependency" height="400" src="https://user-images.githubusercontent.com/3823941/200121198-3eb6b159-bfbd-47fc-b8ef-3adf1dcc0fc3.jpg">
 
 * With this approach, ViewModel holds the business logic and does not care about the view and Unity related logic.
 * View does not care about the business logic, only listens to the ViewModel to adjust itself.
