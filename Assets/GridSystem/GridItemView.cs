@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 
@@ -13,6 +14,18 @@ namespace TapMatch.GridSystem
         private int row;
         private int column;
         private GridItemModel model;
+
+        private Vector3 initialLocalScale;
+
+        private void Awake()
+        {
+            this.initialLocalScale = this.transform.localScale;
+        }
+
+        private void OnEnable()
+        {
+            this.transform.localScale = this.initialLocalScale;
+        }
 
         public void Init(GridItemModel model, int row, int column)
         {
@@ -33,11 +46,11 @@ namespace TapMatch.GridSystem
             this.Clicked?.Invoke(this.row, this.column);
         }
 
-        public void DestroyView()
+        public void AnimateOut(Action onCompleteAction)
         {
             this.transform
                 .DOScale(Vector3.zero, 0.2f)
-                .OnComplete(() => Destroy(this.gameObject));
+                .OnComplete(() => onCompleteAction?.Invoke());
         }
     }
 }

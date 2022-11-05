@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using TapMatch.GridSystem.Interactions;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace TapMatch.GridSystem
 {
@@ -12,6 +13,7 @@ namespace TapMatch.GridSystem
         private GridViewModel viewModel;
         private GridItemView[,] gridItemViews;
 
+        private IObjectPool<GridItemView> itemViewPool;
         private int rowCount;
         private int colCount;
 
@@ -20,6 +22,8 @@ namespace TapMatch.GridSystem
         public void Init(GridViewModel viewModel)
         {
             this.viewModel = viewModel;
+            this.rowCount = this.viewModel.GridItemModels.GetLength(0);
+            this.colCount = this.viewModel.GridItemModels.GetLength(1);
 
             this.viewModel.AddedGridItems += this.OnAddedGridItems;
             this.viewModel.DestroyedGridItems += this.OnDestroyedGridItems;
@@ -28,35 +32,38 @@ namespace TapMatch.GridSystem
 
         private void Start()
         {
-            this.rowCount = this.viewModel.GridItemModels.GetLength(0);
-            this.colCount = this.viewModel.GridItemModels.GetLength(1);
             this.gridItemViews = new GridItemView[this.rowCount, this.colCount];
+            this.itemViewPool = new ObjectPool<GridItemView>(
+                this.CreateGridItemView,
+                actionOnGet: view => view.gameObject.SetActive(true),
+                actionOnRelease: view => view.gameObject.SetActive(false),
+                defaultCapacity: this.rowCount * this.colCount);
 
             for (var row = 0; row < this.rowCount; row++)
             {
                 for (var column = 0; column < this.colCount; column++)
                 {
-                    this.CreateGridItemView(row, column, initialCreation: true);
+                    var itemView = this.itemViewPool.Get();
+                    this.InitGridItemView(itemView, row, column, initialCreation: true);
                 }
             }
         }
 
-        private void CreateGridItemView(int row, int column, bool initialCreation)
+        private void InitGridItemView(GridItemView view, int row, int column, bool initialCreation)
         {
-            var gridItemView = Instantiate(
-                this.gridItemViewPrefab,
-                new Vector3(column - ((float) (this.colCount - 1) / 2), ((float) (this.rowCount - 1) / 2) - row, 0),
-                Quaternion.identity,
-                this.transform);
+            var viewTransform = view.transform;
+            viewTransform.position = new Vector3(
+                x: column - ((float)(this.colCount - 1) / 2),
+                y: ((float)(this.rowCount - 1) / 2) - row,
+                z: 0);
 
             var itemModel = this.viewModel.GridItemModels[row, column];
-            gridItemView.Init(itemModel, row, column);
-            gridItemView.Clicked += this.OnClickedToItemView;
-            this.gridItemViews[row, column] = gridItemView;
+            view.Init(itemModel, row, column);
+            view.Clicked += this.OnClickedToItemView;
+            this.gridItemViews[row, column] = view;
 
             if (!initialCreation)
             {
-                var viewTransform = gridItemView.transform;
                 var initialScale = viewTransform.localScale;
                 viewTransform.localScale = Vector3.zero;
 
@@ -76,7 +83,8 @@ namespace TapMatch.GridSystem
         {
             for (var i = 0; i < indices.Length; i++)
             {
-                this.CreateGridItemView(indices[i].Row, indices[i].Column, initialCreation: false);
+                var itemView = this.itemViewPool.Get();
+                this.InitGridItemView(itemView, indices[i].Row, indices[i].Column, initialCreation: false);
             }
         }
 
@@ -89,7 +97,8 @@ namespace TapMatch.GridSystem
 
                 var itemView = this.gridItemViews[row, column];
                 itemView.Clicked -= this.OnClickedToItemView;
-                itemView.DestroyView();
+                itemView.AnimateOut(onCompleteAction: () => this.itemViewPool.Release(itemView));
+
                 this.gridItemViews[row, column] = null;
             }
 
@@ -116,5 +125,11 @@ namespace TapMatch.GridSystem
                     });
             }
         }
+
+        private GridItemView CreateGridItemView() => Instantiate(
+            this.gridItemViewPrefab,
+            Vector3.zero,
+            Quaternion.identity,
+            this.transform);
     }
 }
