@@ -34,7 +34,7 @@ namespace TapMatch.Initialization
                     return;
                 }
 
-                if (!int.TryParse(this.rowInput.text, out var columnCount) || columnCount < 1)
+                if (!int.TryParse(this.columnInput.text, out var columnCount) || columnCount < 1)
                 {
                     Debug.LogError("Invalid column value!");
                     return;
