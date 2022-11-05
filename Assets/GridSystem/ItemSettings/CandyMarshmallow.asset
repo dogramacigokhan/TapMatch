@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e294321a4246475595f54b0068b2da90, type: 3}
   m_Name: CandyMarshmallow
   m_EditorClassIdentifier: 
-  typeId: 1
+  typeId: 2
   color: {r: 1, g: 1, b: 1, a: 1}
   sprite: {fileID: 21300000, guid: 79484f03cef7145b9a90827884f00048, type: 3}

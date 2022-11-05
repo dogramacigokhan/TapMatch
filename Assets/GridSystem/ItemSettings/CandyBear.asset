@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e294321a4246475595f54b0068b2da90, type: 3}
-  m_Name: CandyRedWhite
+  m_Name: CandyBear
   m_EditorClassIdentifier: 
-  typeId: 4
+  typeId: 0
   color: {r: 1, g: 1, b: 1, a: 1}
-  sprite: {fileID: 21300000, guid: 3c680758335ac4d4588268fd18ed958b, type: 3}
+  sprite: {fileID: 21300000, guid: acb530f6cf6ff4f4daf1fb569ff81021, type: 3}
