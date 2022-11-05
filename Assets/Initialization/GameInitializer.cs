@@ -64,7 +64,7 @@ namespace TapMatch.Initialization
             {
                 this.gridView,
 #if UNITY_EDITOR
-                GridSystem.Interactions.Editor.EditorGridInteractionProvider.Instance,
+                GridSystem.Interactions.Editor.EditorGridInteractionProvider.GetInstanceWithForcedReinitialization(),
 #endif
             };
 
