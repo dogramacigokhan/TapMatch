@@ -81,7 +81,7 @@ There's also NSubstitute dependency to mock some interfaces to reduce the scope 
 
 There's currently also 100% code coverage for the ViewModel and DFS class:
 
-- Image here -
+![Coverage](https://user-images.githubusercontent.com/3823941/200122762-3f53074b-4e68-446d-b76b-8ea627927e05.jpg)
 
 Overall coverage can be increased by adding tests for Grid View, and Grid Item views. Since they don't hold the business logic in them, a mocked ViewModel can be created to drive them and assert UI changes in the test easily.
 
