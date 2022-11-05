@@ -4,7 +4,9 @@
     "references": [
         "GridSystem",
         "GridSystem.Interactions",
-        "Networking"
+        "GridSystem.Interactions.Editor",
+        "UnityEditor.UI",
+        "UnityEngine.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,6 +1,6 @@
 using TapMatch.GridSystem;
 using TapMatch.GridSystem.Interactions;
-using TapMatch.Networking;
+using TapMatch.GridSystem.Interactions.Editor;
 using UnityEngine;
 
 namespace TapMatch.Initialization
@@ -16,7 +16,9 @@ namespace TapMatch.Initialization
             var interactionProviders = new IInteractionProvider[]
             {
                 gridView,
-                new NetworkInteractionSource(),
+#if UNITY_EDITOR
+                EditorGridInteractionProvider.Instance,
+#endif
             };
 
             var viewModel = new GridViewModel(
