@@ -1,4 +1,4 @@
-# Architecture
+# Architecture Decision
 
 ## Single Grid Manager Class
 
@@ -61,6 +61,13 @@ class GridModel {}
 # Assemblies, Classes and Dependencies
 
 There are multiple assemblies in the project, each with different responsibilites.
+
+![ItemTypeDependency](https://user-images.githubusercontent.com/3823941/200121194-5c19fa3f-8c1b-4e3b-bfec-3bb493c4f2a7.jpg)
+![MainAssemblies](https://user-images.githubusercontent.com/3823941/200121197-2658fa9b-41d4-4c43-a034-5b7a52f821d6.jpg)
+![MainClassDependency](https://user-images.githubusercontent.com/3823941/200121198-3eb6b159-bfbd-47fc-b8ef-3adf1dcc0fc3.jpg)
+![SearchDependency](https://user-images.githubusercontent.com/3823941/200121199-7015bbdf-6822-423e-b885-ecbad95d909c.jpg)
+![TestAssembly](https://user-images.githubusercontent.com/3823941/200121200-96a11264-355e-4369-8a04-1079a678bea2.jpg)
+
 
 ```csharp
 class GridViewModel {
