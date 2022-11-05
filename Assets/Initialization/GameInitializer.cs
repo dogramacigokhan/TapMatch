@@ -20,6 +20,7 @@ namespace TapMatch.Initialization
         [SerializeField] private Button resetButton;
 
         private GridView gridView;
+        private GridViewModel viewModel;
 
         private void Awake()
         {
@@ -67,7 +68,8 @@ namespace TapMatch.Initialization
 #endif
             };
 
-            var viewModel = new GridViewModel(
+            this.viewModel?.Dispose();
+            this.viewModel = new GridViewModel(
                 rowCount,
                 colCount,
                 colorCount,

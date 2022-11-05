@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TapMatch.GridSystem.Interactions;
@@ -5,7 +6,7 @@ using UnityEngine;
 
 namespace TapMatch.GridSystem
 {
-    public class GridViewModel
+    public class GridViewModel : IDisposable
     {
         public delegate void AddedOrDestroyedGridItemsEventHandler(GridIndex[] indices);
         public delegate void ShiftedGridItemsEventHandler(Dictionary<GridIndex, int> indicesToShift);
@@ -18,6 +19,7 @@ namespace TapMatch.GridSystem
         private readonly GridItemModelGenerator gridItemModelGenerator;
         private readonly IReadOnlyList<IGridItemSetting> gridItemSettings;
         private readonly IGridMatchFinder gridMatchFinder;
+        private readonly IReadOnlyList<IInteractionProvider> interactionProviders;
 
         private readonly int colorCount;
         private bool areInteractionsEnabled = true;
@@ -34,13 +36,22 @@ namespace TapMatch.GridSystem
             this.gridItemSettings = gridItemSettings;
             this.gridItemModelGenerator = new GridItemModelGenerator();
             this.gridMatchFinder = gridMatchFinder;
+            this.interactionProviders = interactionProviders.ToList();
 
             this.GridItemModels = new GridItemModel[rowCount, colCount];
             this.gridItemModelGenerator.GenerateModels(this.GridItemModels, gridItemSettings, colorCount);
 
-            foreach (var interactionProvider in interactionProviders)
+            foreach (var interactionProvider in this.interactionProviders)
             {
                 interactionProvider.GridItemSelected += this.OnGridItemSelected;
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var interactionProvider in this.interactionProviders)
+            {
+                interactionProvider.GridItemSelected -= this.OnGridItemSelected;
             }
         }
 
