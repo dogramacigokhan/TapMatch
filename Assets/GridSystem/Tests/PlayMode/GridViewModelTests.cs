@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NSubstitute;
 using NUnit.Framework;
 using TapMatch.GridSystem.Interactions;
+using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace TapMatch.GridSystem.Tests.PlayMode
 {
@@ -57,6 +60,48 @@ namespace TapMatch.GridSystem.Tests.PlayMode
                 handler.ReceivedWithAnyArgs().Invoke(Arg.Is<GridIndex[]>(arg => arg.Length == 1 && arg[0].Row == 2 && arg[0].Column == 3));
             });
         }
+
+        [Test]
+        public void GridViewModel_DoesNotListenToInteractions_WhenItIsSuppressed()
+        {
+            var extraInteractionProvider = Substitute.For<IInteractionProvider>();
+            var viewModel = this.MakeViewModel(
+                rowCount: 5,
+                colCount: 5,
+                interactionProviders: new []
+                {
+                    this.mainInteractionProvider,
+                    extraInteractionProvider,
+                });
+
+            var handler = Substitute.For<GridViewModel.AddedOrDestroyedGridItemsEventHandler>();
+            viewModel.DestroyedGridItems += handler;
+
+            viewModel.SuppressInteractions(shouldSuppress: true);
+
+            // Trigger the interactions and expect it to be handled by grid view-model
+            this.mainInteractionProvider.GridItemSelected += Raise.Event<Action<(int row, int column)>>((1, 2));
+            this.mainInteractionProvider.GridItemSelected += Raise.Event<Action<(int row, int column)>>((2, 3));
+
+            handler.DidNotReceiveWithAnyArgs().Invoke(default);
+            LogAssert.Expect(LogType.Warning, new Regex("Interactions are suppressed."));
+        }
+
+        [Test]
+        public void GridViewModel_DoesNotListenToInteractions_WhenItIsDisposed()
+        {
+            var viewModel = this.MakeViewModel(rowCount: 5, colCount: 5, interactionProviders: new[] {this.mainInteractionProvider,});
+
+            var handler = Substitute.For<GridViewModel.AddedOrDestroyedGridItemsEventHandler>();
+            viewModel.DestroyedGridItems += handler;
+            viewModel.Dispose();
+
+            // Trigger the interactions and expect it to be handled by grid view-model
+            this.mainInteractionProvider.GridItemSelected += Raise.Event<Action<(int row, int column)>>((1, 2));
+
+            handler.DidNotReceiveWithAnyArgs().Invoke(default);
+        }
+
 
         public static readonly TestCaseData[] GridTestCases =
         {
