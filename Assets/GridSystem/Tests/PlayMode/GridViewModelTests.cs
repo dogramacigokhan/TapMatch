@@ -230,12 +230,17 @@ namespace TapMatch.GridSystem.Tests.PlayMode
             int rowCount,
             int colCount,
             IReadOnlyList<IGridItemSetting> gridItemSettings = null,
-            IEnumerable<IInteractionProvider> interactionProviders = null) => new GridViewModel(
-            rowCount,
-            colCount,
-            gridItemSettings ?? GenerateSettings(colorCount: 3),
-            interactionProviders ?? new[] {this.mainInteractionProvider},
-            this.gridMatchFinder);
+            IEnumerable<IInteractionProvider> interactionProviders = null)
+        {
+            var settingsToUse = gridItemSettings ?? this.GenerateSettings(colorCount: 3);
+            return new GridViewModel(
+                rowCount,
+                colCount,
+                colorCount: settingsToUse.Count,
+                settingsToUse,
+                interactionProviders ?? new[] { this.mainInteractionProvider },
+                this.gridMatchFinder);
+        }
 
         public class GridTestCase
         {

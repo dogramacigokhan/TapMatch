@@ -5,6 +5,7 @@
         "GridSystem",
         "GridSystem.Interactions",
         "GridSystem.Interactions.Editor",
+        "Unity.TextMeshPro",
         "UnityEditor.UI",
         "UnityEngine.UI"
     ],

@@ -19,21 +19,24 @@ namespace TapMatch.GridSystem
         private readonly IReadOnlyList<IGridItemSetting> gridItemSettings;
         private readonly IGridMatchFinder gridMatchFinder;
 
+        private readonly int colorCount;
         private bool areInteractionsEnabled = true;
 
         public GridViewModel(
             int rowCount,
             int colCount,
+            int colorCount,
             IReadOnlyList<IGridItemSetting> gridItemSettings,
             IEnumerable<IInteractionProvider> interactionProviders,
             IGridMatchFinder gridMatchFinder)
         {
+            this.colorCount = colorCount;
             this.gridItemSettings = gridItemSettings;
             this.gridItemModelGenerator = new GridItemModelGenerator();
             this.gridMatchFinder = gridMatchFinder;
 
             this.GridItemModels = new GridItemModel[rowCount, colCount];
-            this.gridItemModelGenerator.GenerateModels(this.GridItemModels, gridItemSettings);
+            this.gridItemModelGenerator.GenerateModels(this.GridItemModels, gridItemSettings, colorCount);
 
             foreach (var interactionProvider in interactionProviders)
             {
@@ -106,7 +109,7 @@ namespace TapMatch.GridSystem
             foreach (var index in indicesToAdd)
             {
                 this.GridItemModels[index.Row, index.Column] =
-                    this.gridItemModelGenerator.GenerateModel(this.gridItemSettings);
+                    this.gridItemModelGenerator.GenerateModel(this.gridItemSettings, this.colorCount);
             }
 
             this.AddedGridItems?.Invoke(indicesToAdd);
