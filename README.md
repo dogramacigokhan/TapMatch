@@ -114,3 +114,12 @@ This approach makes testing extremely easy, because the concerns are separated i
 <img alt="DFS Search Dependency" height="300" src="https://user-images.githubusercontent.com/3823941/200121199-7015bbdf-6822-423e-b885-ecbad95d909c.jpg">
 
 Similar to interaction providers, search algorithms are also abstracted behind an interface (`IGridMatchFinder`) so the algorithm can be replaced without modifying the dependants directly.
+
+---
+
+# Optimizations
+
+Some of the optimizations in project:
+* Used [ObjectPool](https://docs.unity3d.com/ScriptReference/Pool.ObjectPool_1.html) in [GridView](https://github.com/dogramacigokhan/TapMatch/blob/master/Assets/GridSystem/GridView.cs#L16) to instantiate and store items in the grid to not destroy and re-instantiate them over and over again.
+* Used `SpriteAtlas` for items (candies) to render them at once.
+* Optimized garbage collection by escaping redundant array initializations where possible by iterating through the same collection, or accepting an arrays in methods to be filled in e.g. in [GridItemModelGenerator](https://github.com/dogramacigokhan/TapMatch/blob/master/Assets/GridSystem/GridItemModelGenerator.cs#L16).
