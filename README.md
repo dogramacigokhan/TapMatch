@@ -118,6 +118,12 @@ Similar to interaction providers, search algorithms are also abstracted behind a
 
 ---
 
+# External Controller
+
+Game can be controlled externally, through a Unity Editor window that can be accessed with `"Tools/Game Controller"` menu. It provides a simple interface to select a certain row and column to remove specified candy and all the connected ones, similar to clicking on that.
+
+---
+
 # Optimizations
 
 Some of the optimizations in project:
