@@ -29,7 +29,8 @@ https://user-images.githubusercontent.com/3823941/200122986-588edd0d-b4e8-4dce-b
 
 ### Disadvantages:
 
-* Controller -> View dependency is not very desirable for this problem. Controller can drive the view by calling the methods on it, but it also needs to listen to inputs / commands from somewhere (`ITapMatchInteractions`). Having references from Controller to both view and an aggregated interaction listener may not make sense because view is already an interaction provider.
+* Requires Controller -> View dependency
+  * This may not very desirable for this problem. Because the controller can drive the view by calling the methods on it, but it also needs to listen to inputs / commands from somewhere (`IInteractionProvider`). Having references from Controller to both view and interaction provider interface may not make sense because view is already an interaction provider.
 
 ```csharp
 interface IInteractionProvider { /* Events */ }
@@ -63,7 +64,7 @@ class GridViewModel { /* ref. to IInteractionProvider[] */ }
 class GridModel {}
 ```
 
-**This project is developed with MVVM.**
+_**This project is developed with MVVM.**_
 
 ---
 
